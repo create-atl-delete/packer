@@ -8,6 +8,15 @@ Set-ExecutionPolicy Unrestricted -Scope LocalMachine -Force -ErrorAction Ignore
 # Don't set this before Set-ExecutionPolicy as it throws an error
 $ErrorActionPreference = "stop"
 
+# Install SSM Agent if not present
+if (-not (Get-Service AmazonSSMAgent -ErrorAction SilentlyContinue)) {
+    Write-Output "SSM Agent not found, installing..."
+    Invoke-WebRequest -Uri "https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/windows_amd64/AmazonSSMAgentSetup.exe" -OutFile "$env:TEMP\AmazonSSMAgentSetup.exe"
+    Start-Process -FilePath "$env:TEMP\AmazonSSMAgentSetup.exe" -ArgumentList "/install", "/quiet" -Wait
+    Remove-Item -Path "$env:TEMP\AmazonSSMAgentSetup.exe" -Force
+    Start-Service AmazonSSMAgent
+}
+
 # Install sshd
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 

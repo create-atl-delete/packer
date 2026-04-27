@@ -51,12 +51,6 @@ build {
     inline = ["Write-Host Connected via SSM at '${build.User}@${build.Host}:${build.Port}'"]
   }
   provisioner "powershell" {
-    scripts = [
-      "../scripts/domain_join.ps1",
-      "../scripts/anything_else.ps1"
-    ]
-  }
-  provisioner "powershell" {
     inline = ["C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/InitializeInstance.ps1 -Schedule"]
   }
 }
